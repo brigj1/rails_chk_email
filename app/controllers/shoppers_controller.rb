@@ -1,5 +1,6 @@
 # app/controllers/shoppers_controller.rb
 class ShoppersController < ApplicationController
+  before_action :redirect_if_authenticated, only: [:create, :new]
 
   def create
     @shopper = Shopper.new(shopper_params)
