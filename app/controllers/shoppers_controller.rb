@@ -4,6 +4,7 @@ class ShoppersController < ApplicationController
   def create
     @shopper = Shopper.new(shopper_params)
     if @shopper.save
+      @shopper.send_confirmation_email!
       redirect_to root_path, notice: "Please check your email for confirmation instructions."
     else
       render :new, status: :unprocessable_entity

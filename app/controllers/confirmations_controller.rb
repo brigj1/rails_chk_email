@@ -1,9 +1,11 @@
+# app/controllers/confirmations_controller.rb
 class ConfirmationsController < ApplicationController
 
   def create
     @shopper = Shopper.find_by(email: params[:shopper][:email].downcase)
 
     if @shopper.present? && @shopper.unconfirmed?
+      @shopper.send_confirmation_email!
       redirect_to root_path, notice: "Check your email for confirmation instructions."
     else
       redirect_to new_confirmation_path, alert: "We could not find a shopper with that email or that email has already been confirmed."
