@@ -1,0 +1,28 @@
+class ConfirmationsController < ApplicationController
+
+  def create
+    @shopper = Shopper.find_by(email: params[:shopper][:email].downcase)
+
+    if @shopper.present? && @shopper.unconfirmed?
+      redirect_to root_path, notice: "Check your email for confirmation instructions."
+    else
+      redirect_to new_confirmation_path, alert: "We could not find a shopper with that email or that email has already been confirmed."
+    end
+  end
+
+  def edit
+    @shopper = Shopper.find_signed(params[:confirmation_token], purpose: :confirm_email)
+
+    if @shopper.present?
+      @shopper.confirm!
+      redirect_to root_path, notice: "Your account has been confirmed."
+    else
+      redirect_to new_confirmation_path, alert: "Invalid token."
+    end
+  end
+
+  def new
+    @shopper = Shopper.new
+  end
+
+end

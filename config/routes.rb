@@ -13,4 +13,7 @@ Rails.application.routes.draw do
 
   post "sign_up", to: "shoppers#create"
   get  "sign_up", to: "shoppers#new"
+
+  resources :confirmations, only: [:create, :edit, :new], param: :confirmation_token
+
 end
