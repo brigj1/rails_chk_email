@@ -11,7 +11,8 @@ class ShopperMailer < ApplicationMailer
     #
     #   en.shopper_mailer.confirmation.subject
     #
-    mail to: @shopper.email, subject: "Confirmation Instructions"
+    # mail to: @shopper.email, subject: "Confirmation Instructions"
+    mail to: @shopper.confirmable_email, subject: "Confirmation Instructions"
   end
 
   def password_reset(shopper, password_reset_token)

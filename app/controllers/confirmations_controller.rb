@@ -17,9 +17,12 @@ class ConfirmationsController < ApplicationController
     @shopper = Shopper.find_signed(params[:confirmation_token], purpose: :confirm_email)
 
     if @shopper.present?
-      @shopper.confirm!
-      login @shopper
-      redirect_to root_path, notice: "Your account has been confirmed."
+      if @shopper.confirm!
+        login @shopper
+        redirect_to root_path, notice: "Your account has been confirmed."
+      else
+        redirect_to new_confirmation_path, alert: "Something went wrong."
+      end
     else
       redirect_to new_confirmation_path, alert: "Invalid token."
     end
