@@ -10,11 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_03_143750) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_03_145052) do
   create_table "shoppers", force: :cascade do |t|
     t.string "email", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "confirmed_at"
+    t.string "password_digest"
     t.index ["email"], name: "index_shoppers_on_email", unique: true
   end
 
