@@ -13,4 +13,12 @@ class ShopperMailer < ApplicationMailer
     #
     mail to: @shopper.email, subject: "Confirmation Instructions"
   end
+
+  def password_reset(shopper, password_reset_token)
+    @shopper = shopper
+    @password_reset_token = password_reset_token
+
+    mail to: @shopper.email, subject: "Password Reset Instructions"
+  end
+
 end
