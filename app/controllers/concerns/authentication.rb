@@ -17,8 +17,18 @@ module Authentication
     session[:current_shopper_id] = shopper.id
   end
 
+  def remember(shopper)
+    shopper.regenerate_remember_token
+    cookies.permanent.encrypted[:remember_token] = shopper.remember_token
+  end
+
   def logout
     reset_session
+  end
+
+  def forget(shopper)
+    cookies.delete :remember_token
+    shopper.regenerate_remember_token
   end
 
   def redirect_if_authenticated
@@ -28,7 +38,11 @@ module Authentication
   private
 
   def current_shopper
-    Current.shopper ||= session[:current_shopper_id] && Shopper.find_by(id: session[:current_shopper_id])
+    Current.shopper ||= if session[:current_shopper_id].present?
+      Shopper.find_by(id: session[:current_shopper_id])
+    elsif cookies.permanent.encrypted[:remember_token].present?
+      Shopper.find_by(remember_token: cookies.permanent.encrypted[:remember_token])
+    end
   end
 
   def shopper_signed_in?
