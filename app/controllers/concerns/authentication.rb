@@ -8,6 +8,10 @@ module Authentication
     helper_method :shopper_signed_in?
   end
 
+  def authenticate_shopper!
+    redirect_to login_path, alert: "You need to login to access that page." unless shopper_signed_in?
+  end
+
   def login(shopper)
     reset_session
     session[:current_shopper_id] = shopper.id

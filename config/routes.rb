@@ -22,4 +22,8 @@ Rails.application.routes.draw do
 
   resources :passwords, only: [:create, :edit, :new, :update], param: :password_reset_token
 
+  put    "account", to: "shoppers#update"
+  get    "account", to: "shoppers#edit"
+  delete "account", to: "shoppers#destroy"
+
 end
