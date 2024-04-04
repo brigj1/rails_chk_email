@@ -16,7 +16,7 @@ class ConfirmationsController < ApplicationController
   def edit
     @shopper = Shopper.find_signed(params[:confirmation_token], purpose: :confirm_email)
 
-    if @shopper.present?
+    if @shopper.present? && @shopper.unconfirmed_or_reconfirming?
       if @shopper.confirm!
         login @shopper
         redirect_to root_path, notice: "Your account has been confirmed."
