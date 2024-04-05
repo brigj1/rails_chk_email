@@ -4,18 +4,15 @@ class SessionsController < ApplicationController
   before_action :authenticate_shopper!, only: [:destroy]
 
   def create
-    @shopper = Shopper.find_by(email: params[:shopper][:email].downcase)
+    @shopper = Shopper.authenticate_by(email: params[:shopper][:email].downcase, password: params[:shopper][:password])
     if @shopper
       if @shopper.unconfirmed?
         redirect_to new_confirmation_path, alert: "Incorrect email or password."
-      elsif @shopper.authenticate(params[:shopper][:password])
+      else
         after_login_path = session[:shopper_return_to] || root_path
         login @shopper
         remember(@shopper) if params[:shopper][:remember_me] == "1"
         redirect_to after_login_path, notice: "Signed in."
-      else
-        flash.now[:alert] = "Incorrect email or password."
-        render :new, status: :unprocessable_entity
       end
     else
       flash.now[:alert] = "Incorrect email or password."
