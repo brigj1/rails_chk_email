@@ -9,6 +9,7 @@ module Authentication
   end
 
   def authenticate_shopper!
+    store_location
     redirect_to login_path, alert: "You need to login to access that page." unless shopper_signed_in?
   end
 
@@ -47,6 +48,10 @@ module Authentication
 
   def shopper_signed_in?
     Current.shopper.present?
+  end
+
+  def store_location
+    session[:shopper_return_to] = request.original_url if request.get? && request.local?
   end
 
 end
