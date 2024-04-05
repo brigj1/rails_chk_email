@@ -19,10 +19,13 @@ class ShoppersController < ApplicationController
 
   def edit
     @shopper = current_shopper
+    @active_sessions = @shopper.active_sessions.order(created_at: :desc)
   end
 
   def update
     @shopper = current_shopper
+    @active_sessions = @shopper.active_sessions.order(created_at: :desc)
+
     if @shopper.authenticate(params[:shopper][:current_password])
       if @shopper.update(update_shopper_params)
         if params[:shopper][:unconfirmed_email].present?

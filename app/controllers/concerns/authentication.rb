@@ -15,7 +15,7 @@ module Authentication
 
   def login(shopper)
     reset_session
-    active_session = shopper.active_sessions.create!
+    active_session = shopper.active_sessions.create!(user_agent: request.user_agent, ip_address: request.ip)
     session[:current_active_session_id] = active_session.id
   end
 
