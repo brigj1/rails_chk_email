@@ -44,7 +44,7 @@ module Authentication
   def current_shopper
     # Current.shopper ||= if session[...
     Current.shopper = if session[:current_active_session_id].present?
-      ActiveSession.find_by(id: session[:current_active_session_id]).shopper
+      ActiveSession.find_by(id: session[:current_active_session_id])&.shopper
     elsif cookies.permanent.encrypted[:remember_token].present?
       Shopper.find_by(remember_token: cookies.permanent.encrypted[:remember_token])
     end
