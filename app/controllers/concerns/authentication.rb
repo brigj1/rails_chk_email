@@ -15,7 +15,8 @@ module Authentication
 
   def login(shopper)
     reset_session
-    session[:current_shopper_id] = shopper.id
+    active_session = shopper.active_sessions.create!
+    session[:current_active_session_id] = active_session.id
   end
 
   def remember(shopper)
@@ -24,7 +25,9 @@ module Authentication
   end
 
   def logout
+    active_session = ActiveSession.find_by(id: session[:current_active_session_id])
     reset_session
+    active_session.destroy! if active_session.present?
   end
 
   def forget(shopper)
@@ -39,8 +42,9 @@ module Authentication
   private
 
   def current_shopper
-    Current.shopper ||= if session[:current_shopper_id].present?
-      Shopper.find_by(id: session[:current_shopper_id])
+    # Current.shopper ||= if session[...
+    Current.shopper = if session[:current_active_session_id].present?
+      ActiveSession.find_by(id: session[:current_active_session_id]).shopper
     elsif cookies.permanent.encrypted[:remember_token].present?
       Shopper.find_by(remember_token: cookies.permanent.encrypted[:remember_token])
     end

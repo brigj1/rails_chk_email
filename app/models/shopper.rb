@@ -13,6 +13,8 @@ class Shopper < ApplicationRecord
   before_save :downcase_email
   before_save :downcase_unconfirmed_email
 
+  has_many :active_sessions, dependent: :destroy
+
   validates :email, format: {with: URI::MailTo::EMAIL_REGEXP}, presence: true, uniqueness: true
   validates :unconfirmed_email, format: {with: URI::MailTo::EMAIL_REGEXP, allow_blank: true}
 
