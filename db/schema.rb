@@ -10,13 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_05_021637) do
+ActiveRecord::Schema[7.1].define(version: 2024_04_06_214228) do
   create_table "active_sessions", force: :cascade do |t|
     t.integer "shopper_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "user_agent"
     t.string "ip_address"
+    t.string "remember_token", null: false
+    t.index ["remember_token"], name: "index_active_sessions_on_remember_token", unique: true
     t.index ["shopper_id"], name: "index_active_sessions_on_shopper_id"
   end
 
@@ -27,9 +29,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_05_021637) do
     t.datetime "confirmed_at"
     t.string "password_digest"
     t.string "unconfirmed_email"
-    t.string "remember_token", null: false
     t.index ["email"], name: "index_shoppers_on_email", unique: true
-    t.index ["remember_token"], name: "index_shoppers_on_remember_token", unique: true
   end
 
   add_foreign_key "active_sessions", "shoppers", on_delete: :cascade

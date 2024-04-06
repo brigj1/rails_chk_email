@@ -8,10 +8,12 @@ class SessionsController < ApplicationController
     if @shopper
       if @shopper.unconfirmed?
         redirect_to new_confirmation_path, alert: "Incorrect email or password."
+        # per https://github.com/stevepolitodesign/rails-authentication-from-scratch/pull/94 do:
+        #redirect_to new_confirmation_path, alert: "Please confirm your email first."
       else
         after_login_path = session[:shopper_return_to] || root_path
-        login @shopper
-        remember(@shopper) if params[:shopper][:remember_me] == "1"
+        active_session = login @shopper
+        remember(active_session) if params[:shopper][:remember_me] == "1"
         redirect_to after_login_path, notice: "Signed in."
       end
     else
@@ -21,7 +23,7 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    forget(current_shopper)
+    forget_active_session
     logout
     redirect_to root_path, notice: "Signed out."
   end

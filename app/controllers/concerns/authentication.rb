@@ -17,11 +17,12 @@ module Authentication
     reset_session
     active_session = shopper.active_sessions.create!(user_agent: request.user_agent, ip_address: request.ip)
     session[:current_active_session_id] = active_session.id
+
+    active_session
   end
 
-  def remember(shopper)
-    shopper.regenerate_remember_token
-    cookies.permanent.encrypted[:remember_token] = shopper.remember_token
+  def forget_active_session
+    cookies.delete :remember_token
   end
 
   def logout
@@ -30,13 +31,12 @@ module Authentication
     active_session.destroy! if active_session.present?
   end
 
-  def forget(shopper)
-    cookies.delete :remember_token
-    shopper.regenerate_remember_token
-  end
-
   def redirect_if_authenticated
     redirect_to root_path, alert: "You are already logged in." if shopper_signed_in?
+  end
+
+  def remember(active_session)
+    cookies.permanent.encrypted[:remember_token] = active_session.remember_token
   end
 
   private
@@ -46,8 +46,14 @@ module Authentication
     Current.shopper = if session[:current_active_session_id].present?
       ActiveSession.find_by(id: session[:current_active_session_id])&.shopper
     elsif cookies.permanent.encrypted[:remember_token].present?
-      Shopper.find_by(remember_token: cookies.permanent.encrypted[:remember_token])
+      ActiveSession.find_by(remember_token: cookies.permanent.encrypted[:remember_token])&.shopper
     end
+
+    # per https://github.com/stevepolitodesign/rails-authentication-from-scratch/pull/91
+    # latest code simplifies this as:
+    #elsif cookies[:remember_token]
+      #ActiveSession.find_by(remember_token: cookies.encrypted[:remember_token])&.user
+    #end
   end
 
   def shopper_signed_in?
